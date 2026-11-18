@@ -7,7 +7,7 @@ Aplicación de una sola página (SPA sencilla) para practicar HTML, CSS y JavaSc
 
 ## 1. Integrantes
 
-- Integrante 1: ______________________________
+- Integrante 1: Casablanca Condori Luis Boris
 - Integrante 2: ______________________________
 - Integrante 3: ______________________________
 - Integrante 4: ______________________________
