@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SIMTELE-WEB: simulador educativo de prevención y monitoreo de un sistema de transporte por cable.">
+  <title>SIMTELE-WEB | Centro de monitoreo</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!-- Pantalla de acceso: las credenciales son únicamente para la demostración local. -->
+  <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+    <div class="login-decoration" aria-hidden="true">
+      <div class="login-orbit orbit-one"></div>
+      <div class="login-orbit orbit-two"></div>
+      <div class="login-cable"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="login-card">
+      <div class="brand brand-login">
+        <div class="brand-mark"><span class="brand-mark-line"></span><span class="brand-mark-car">▰</span></div>
+        <div>
+          <strong>SIMTELE<span>·</span>WEB</strong>
+          <small>CENTRO DE MONITOREO EDUCATIVO</small>
+        </div>
+      </div>
+
+      <div class="login-heading">
+        <span class="eyebrow">ACCESO AL SISTEMA</span>
+        <h1 id="loginTitle">Bienvenido, operador</h1>
+        <p>Ingresa tus credenciales para acceder al panel de prevención y monitoreo simulado.</p>
+      </div>
+
+      <form id="loginForm" class="form-stack" novalidate>
+        <div class="field">
+          <label for="username">Usuario</label>
+          <div class="input-with-icon"><span aria-hidden="true">◉</span><input id="username" name="username" type="text" autocomplete="username" placeholder="Ej. operador" required></div>
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="input-with-icon"><span aria-hidden="true">◆</span><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Ingresa tu contraseña" required><button class="show-password" id="togglePassword" type="button" aria-label="Mostrar contraseña">Ver</button></div>
+        </div>
+        <p class="form-message" id="loginMessage" role="alert"></p>
+        <button class="btn btn-primary btn-full" type="submit">Ingresar al sistema <span aria-hidden="true">→</span></button>
+      </form>
+
+      <div class="demo-credentials">
+        <div class="demo-title"><span class="status-dot"></span> ACCESO DE DEMOSTRACIÓN</div>
+        <p>Usuario: <strong>operador</strong> &nbsp;·&nbsp; Contraseña: <strong>teleferico123</strong></p>
+        <small>Estas credenciales solo funcionan en esta práctica local.</small>
+      </div>
+      <div class="login-foot"><span>◈ SIMULACIÓN ACADÉMICA</span><span>Versión 1.0</span></div>
+    </div>
+    <p class="login-disclaimer">Proyecto educativo independiente. No pertenece ni está conectado a Mi Teleférico.</p>
+  </section>
+
+  <!-- Aplicación principal: se muestra después del inicio de sesión. -->
+  <div class="app-shell hidden" id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand brand-sidebar">
+          <div class="brand-mark"><span class="brand-mark-line"></span><span class="brand-mark-car">▰</span></div>
+          <div><strong>SIMTELE<span>·</span>WEB</strong><small>MONITOREO SIMULADO</small></div>
+        </div>
+        <button class="icon-button sidebar-close" id="closeSidebar" type="button" aria-label="Cerrar menú">✕</button>
+      </div>
+
+      <div class="system-status"><span class="pulse-dot"></span><div><strong>SISTEMA DE PRÁCTICA</strong><small>Entorno local activo</small></div></div>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <span class="nav-caption">GENERAL</span>
+        <button class="nav-link active" type="button" data-view="dashboard"><span class="nav-icon">▦</span><span>Panel general</span></button>
+        <button class="nav-link" type="button" data-view="alerts"><span class="nav-icon">⚑</span><span>Centro de alertas</span><span class="nav-count" id="sidebarAlertCount">0</span></button>
+        <span class="nav-caption">MÓDULOS DE CONTROL</span>
+        <button class="nav-link" type="button" data-view="emergency"><span class="nav-icon">⏻</span><span>Detención de emergencia</span></button>
+        <button class="nav-link" type="button" data-view="maintenance"><span class="nav-icon">⚙</span><span>Mantenimiento</span></button>
+        <button class="nav-link" type="button" data-view="wind"><span class="nav-icon">≋</span><span>Viento y oscilación</span></button>
+        <button class="nav-link" type="button" data-view="sensors"><span class="nav-icon">⌁</span><span>Sensores</span></button>
+        <span class="nav-caption">SEGUIMIENTO</span>
+        <button class="nav-link" type="button" data-view="log"><span class="nav-icon">☷</span><span>Bitácora de actividad</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-help"><strong>¿Cómo funciona?</strong><p>Registra datos ficticios, analiza resultados y revisa las alertas generadas.</p><span>Los valores no son operativos.</span></div>
+        <div class="sidebar-user">
+          <div class="avatar" id="sidebarAvatar">OP</div>
+          <div class="user-meta"><strong id="sidebarUserName">Operador</strong><small>Personal de monitoreo</small></div>
+          <button class="icon-button logout-mini" id="sidebarLogout" type="button" aria-label="Cerrar sesión" title="Cerrar sesión">↪</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú">☰</button>
+          <div><div class="breadcrumb">SIMTELE-WEB <span>/</span> <strong id="breadcrumbCurrent">Panel general</strong></div><div class="topbar-subtitle">Plataforma educativa de prevención y monitoreo</div></div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-date"><span class="live-indicator"></span><span>ENTORNO SIMULADO</span><strong id="currentClock">--:--:--</strong></div>
+          <button class="notification-button" id="topAlertButton" type="button" aria-label="Ver alertas" title="Centro de alertas">♧<span id="topAlertDot" class="notification-dot hidden"></span></button>
+          <div class="top-user"><div class="avatar avatar-small" id="topAvatar">OP</div><div><strong id="topUserName">Operador</strong><small>Operador de sala</small></div></div>
+          <button class="icon-button top-logout" id="topLogout" type="button" title="Cerrar sesión" aria-label="Cerrar sesión">↪</button>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <div class="simulation-banner"><span class="banner-icon">ⓘ</span><span><strong>SIMULACIÓN ACADÉMICA:</strong> todos los registros, estados, alertas y umbrales son ficticios. Esta página no recibe datos reales ni controla equipos.</span></div>
+
+        <!-- PANEL GENERAL -->
+        <section class="view-section active-view" id="view-dashboard" aria-labelledby="dashboardTitle">
+          <div class="page-heading heading-with-action">
+            <div><span class="eyebrow">VISTA GENERAL</span><h1 id="dashboardTitle">Panel de monitoreo</h1><p>Resumen del escenario de operación y actividad registrada en esta sesión.</p></div>
+            <div class="heading-actions"><span class="date-chip" id="todayLabel">Hoy</span><button class="btn btn-outline" type="button" id="refreshDashboard">↻ Actualizar vista</button></div>
+          </div>
+
+          <div class="welcome-strip"><div class="welcome-symbol">▤</div><div><strong>Buen trabajo, <span id="welcomeName">Operador</span></strong><p>Revisa el estado de ejemplo, atiende las alertas y registra cualquier evento de práctica.</p></div><div class="welcome-tag"><span class="pulse-dot"></span> Turno de práctica activo</div></div>
+
+          <div class="metric-grid">
+            <article class="metric-card"><div class="metric-top"><span>Alertas pendientes</span><span class="metric-icon icon-red">⚑</span></div><strong class="metric-value" id="metricAlerts">0</strong><small><span class="metric-note">Requieren revisión</span></small></article>
+            <article class="metric-card"><div class="metric-top"><span>Componentes registrados</span><span class="metric-icon icon-blue">⚙</span></div><strong class="metric-value" id="metricMaintenance">0</strong><small><span class="metric-note">En inventario de práctica</span></small></article>
+            <article class="metric-card"><div class="metric-top"><span>Sensores registrados</span><span class="metric-icon icon-purple">⌁</span></div><strong class="metric-value" id="metricSensors">0</strong><small><span class="metric-note">Códigos validados</span></small></article>
+            <article class="metric-card"><div class="metric-top"><span>Eventos en bitácora</span><span class="metric-icon icon-green">☷</span></div><strong class="metric-value" id="metricLog">0</strong><small><span class="metric-note">Acciones guardadas localmente</span></small></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel-card lines-panel">
+              <div class="panel-heading"><div><h2>Estado de líneas de ejemplo</h2><p>Escenario ficticio para practicar la lectura del panel.</p></div><span class="soft-badge neutral">DATOS SIMULADOS</span></div>
+              <div class="line-list" id="lineList">
+                <div class="line-row"><span class="line-color red-line"></span><div class="line-name"><strong>Línea Roja</strong><small>Recorrido de ejemplo A</small></div><span class="line-status status-ok">Normal</span></div>
+                <div class="line-row"><span class="line-color yellow-line"></span><div class="line-name"><strong>Línea Amarilla</strong><small>Recorrido de ejemplo B</small></div><span class="line-status status-review">En observación</span></div>
+                <div class="line-row"><span class="line-color green-line"></span><div class="line-name"><strong>Línea Verde</strong><small>Recorrido de ejemplo C</small></div><span class="line-status status-ok">Normal</span></div>
+                <div class="line-row"><span class="line-color blue-line"></span><div class="line-name"><strong>Línea Azul</strong><small>Recorrido de ejemplo D</small></div><span class="line-status status-ok">Normal</span></div>
+              </div>
+              <div class="panel-footnote">Los nombres de líneas se usan como referencia didáctica; los estados no representan la operación real.</div>
+            </article>
+
+            <article class="panel-card quick-panel">
+              <div class="panel-heading"><div><h2>Accesos rápidos</h2><p>Ir directamente a un módulo.</p></div></div>
+              <div class="quick-actions">
+                <button class="quick-action" type="button" data-go="emergency"><span class="quick-icon quick-red">⏻</span><span><strong>Evaluar detención</strong><small>Calcular distancia de reacción</small></span><b>→</b></button>
+                <button class="quick-action" type="button" data-go="maintenance"><span class="quick-icon quick-blue">⚙</span><span><strong>Registrar mantenimiento</strong><small>Agregar un componente</small></span><b>→</b></button>
+                <button class="quick-action" type="button" data-go="wind"><span class="quick-icon quick-teal">≋</span><span><strong>Medir viento</strong><small>Analizar cinco lecturas</small></span><b>→</b></button>
+                <button class="quick-action" type="button" data-go="sensors"><span class="quick-icon quick-purple">⌁</span><span><strong>Registrar sensor</strong><small>Validar código y lectura</small></span><b>→</b></button>
+              </div>
+            </article>
+          </div>
+
+          <div class="dashboard-bottom-grid">
+            <article class="panel-card"><div class="panel-heading"><div><h2>Últimas alertas</h2><p>Eventos que requieren atención en la simulación.</p></div><button class="text-button" type="button" data-go="alerts">Ver todas →</button></div><div id="dashboardAlerts" class="compact-list empty-state-small">No hay alertas pendientes.</div></article>
+            <article class="panel-card"><div class="panel-heading"><div><h2>Actividad reciente</h2><p>Últimas acciones del operador.</p></div><button class="text-button" type="button" data-go="log">Ver bitácora →</button></div><div id="dashboardActivity" class="compact-list empty-state-small">Aún no hay actividad registrada.</div></article>
+          </div>
+        </section>
+
+        <!-- CENTRO DE ALERTAS -->
+        <section class="view-section" id="view-alerts" aria-labelledby="alertsTitle">
+          <div class="page-heading"><span class="eyebrow">GESTIÓN DE EVENTOS</span><h1 id="alertsTitle">Centro de alertas</h1><p>Revisa, clasifica y atiende las alertas generadas por los módulos de práctica.</p></div>
+          <div class="alert-summary-grid"><div class="alert-summary"><span class="summary-icon summary-red">⚑</span><div><small>Críticas / altas</small><strong id="criticalAlertCount">0</strong></div></div><div class="alert-summary"><span class="summary-icon summary-amber">◷</span><div><small>Advertencias</small><strong id="warningAlertCount">0</strong></div></div><div class="alert-summary"><span class="summary-icon summary-green">✓</span><div><small>Atendidas</small><strong id="resolvedAlertCount">0</strong></div></div></div>
+          <div class="panel-card table-panel"><div class="panel-heading table-heading"><div><h2>Registro de alertas</h2><p>Las alertas se generan a partir de los datos introducidos en esta página.</p></div><select id="alertFilter" class="select-compact" aria-label="Filtrar alertas"><option value="all">Todas las alertas</option><option value="pending">Pendientes</option><option value="resolved">Atendidas</option></select></div><div class="table-wrap"><table><thead><tr><th>Fecha y hora</th><th>Origen</th><th>Descripción</th><th>Nivel</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="alertsTableBody"><tr><td colspan="6" class="table-empty">No hay alertas registradas.</td></tr></tbody></table></div></div>
+        </section>
+
+        <!-- DETENCIÓN DE EMERGENCIA -->
+        <section class="view-section" id="view-emergency" aria-labelledby="emergencyTitle">
+          <div class="page-heading"><span class="eyebrow">MÓDULO 01 · PREVENCIÓN</span><h1 id="emergencyTitle">Detención de emergencia</h1><p>Estimación didáctica de la distancia recorrida durante el tiempo de reacción.</p></div>
+          <div class="module-layout">
+            <article class="panel-card form-panel"><div class="panel-heading"><div><h2>Parámetros de evaluación</h2><p>Introduce los valores del escenario hipotético.</p></div><span class="module-number">01</span></div>
+              <form id="emergencyForm" class="form-grid" novalidate>
+                <div class="field"><label for="speed">Velocidad de la cabina <span class="required">*</span></label><div class="input-unit"><input id="speed" type="number" min="0.1" max="100" step="0.1" placeholder="Ej. 72" required><span>km/h</span></div><small>Rango didáctico: mayor que 0 y hasta 100 km/h.</small></div>
+                <div class="field"><label for="reactionTime">Tiempo de reacción <span class="required">*</span></label><div class="input-unit"><input id="reactionTime" type="number" min="0.1" max="30" step="0.1" placeholder="Ej. 3" required><span>segundos</span></div><small>Tiempo hipotético entre detectar el evento y reaccionar.</small></div>
+                <div class="form-note full-field"><strong>Fórmula utilizada</strong><span>d = (v / 3.6) × t</span><small>El resultado es una estimación de distancia durante la reacción, no una distancia real de frenado.</small></div>
+                <button class="btn btn-primary full-field" type="submit">Calcular distancia <span>→</span></button>
+              </form>
+            </article>
+            <article class="panel-card result-panel"><div class="panel-heading"><div><h2>Resultado del análisis</h2><p>Evaluación basada en umbrales ficticios.</p></div><span class="result-symbol">⌁</span></div><div id="emergencyResult" class="result-placeholder"><div class="placeholder-icon">↗</div><strong>Esperando datos</strong><p>Completa los parámetros y selecciona “Calcular distancia” para ver el resultado.</p></div><div class="threshold-box"><strong>Umbrales didácticos</strong><div><span class="threshold-dot dot-green"></span> Menor a 20 m: referencia baja</div><div><span class="threshold-dot dot-amber"></span> De 20 a 50 m: precaución</div><div><span class="threshold-dot dot-red"></span> Mayor a 50 m: alerta alta</div><small>Estos valores solo sirven para esta actividad académica.</small></div></article>
+          </div>
+        </section>
+
+        <!-- MANTENIMIENTO -->
+        <section class="view-section" id="view-maintenance" aria-labelledby="maintenanceTitle">
+          <div class="page-heading"><span class="eyebrow">MÓDULO 02 · COMPONENTES</span><h1 id="maintenanceTitle">Mantenimiento</h1><p>Administra el registro de componentes y su estado de revisión en el escenario simulado.</p></div>
+          <div class="module-layout maintenance-layout">
+            <article class="panel-card form-panel"><div class="panel-heading"><div><h2>Nuevo registro</h2><p>Completa los datos del componente.</p></div><span class="module-number">02</span></div>
+              <form id="maintenanceForm" class="form-grid" novalidate>
+                <div class="field full-field"><label for="componentName">Nombre del componente <span class="required">*</span></label><input id="componentName" type="text" maxlength="60" placeholder="Ej. Motor de tracción" required><small>Escribe un nombre identificable.</small></div>
+                <div class="field"><label for="componentCode">Código interno</label><input id="componentCode" type="text" maxlength="20" placeholder="Ej. CMP-001"><small>Opcional, para identificarlo.</small></div>
+                <div class="field"><label for="usageHours">Horas de uso <span class="required">*</span></label><div class="input-unit"><input id="usageHours" type="number" min="0" max="200000" step="1" placeholder="Ej. 1250" required><span>horas</span></div><small>Valor entre 0 y 200.000.</small></div>
+                <div class="field full-field"><label for="componentStatus">Estado del componente <span class="required">*</span></label><select id="componentStatus" required><option value="normal">Normal</option><option value="revision">Revisión</option><option value="urgente">Urgente</option></select></div>
+                <div class="field full-field"><label for="componentNotes">Observaciones</label><textarea id="componentNotes" rows="3" maxlength="180" placeholder="Describe brevemente el estado o la observación..."></textarea></div>
+                <button class="btn btn-primary full-field" type="submit">＋ Guardar componente</button>
+              </form>
+            </article>
+            <article class="panel-card table-panel"><div class="panel-heading"><div><h2>Componentes registrados</h2><p id="maintenanceCountLabel">0 registros guardados localmente.</p></div><span class="soft-badge neutral">INVENTARIO</span></div><div class="table-wrap"><table><thead><tr><th>Componente</th><th>Código</th><th>Horas</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="maintenanceTableBody"><tr><td colspan="5" class="table-empty">Todavía no hay componentes. Agrega el primero mediante el formulario.</td></tr></tbody></table></div><div class="table-caption">Puedes eliminar un registro desde la columna “Acción”.</div></article>
+          </div>
+        </section>
+
+        <!-- VIENTO -->
+        <section class="view-section" id="view-wind" aria-labelledby="windTitle">
+          <div class="page-heading"><span class="eyebrow">MÓDULO 03 · CONDICIONES AMBIENTALES</span><h1 id="windTitle">Viento y oscilación</h1><p>Registra cinco mediciones ficticias para obtener un resumen estadístico básico.</p></div>
+          <div class="wind-layout">
+            <article class="panel-card form-panel"><div class="panel-heading"><div><h2>Lecturas de viento</h2><p>Ingresa cinco valores en km/h.</p></div><span class="module-number">03</span></div><form id="windForm" class="wind-form" novalidate><div class="wind-input-grid"><div class="field"><label for="wind1">Medición 1</label><div class="input-unit"><input id="wind1" type="number" min="0" max="150" step="0.1" placeholder="10" required><span>km/h</span></div></div><div class="field"><label for="wind2">Medición 2</label><div class="input-unit"><input id="wind2" type="number" min="0" max="150" step="0.1" placeholder="20" required><span>km/h</span></div></div><div class="field"><label for="wind3">Medición 3</label><div class="input-unit"><input id="wind3" type="number" min="0" max="150" step="0.1" placeholder="30" required><span>km/h</span></div></div><div class="field"><label for="wind4">Medición 4</label><div class="input-unit"><input id="wind4" type="number" min="0" max="150" step="0.1" placeholder="40" required><span>km/h</span></div></div><div class="field"><label for="wind5">Medición 5</label><div class="input-unit"><input id="wind5" type="number" min="0" max="150" step="0.1" placeholder="50" required><span>km/h</span></div></div></div><p class="help-line">Rango admitido para la práctica: de 0 a 150 km/h. Debes completar las cinco mediciones.</p><button class="btn btn-primary" type="submit">Analizar mediciones →</button></form></article>
+            <article class="panel-card wind-result-panel"><div class="panel-heading"><div><h2>Resumen de mediciones</h2><p>Promedio, máximo y clasificación descriptiva.</p></div><span class="result-symbol">≋</span></div><div id="windResult" class="result-placeholder"><div class="placeholder-icon">⌁</div><strong>Sin análisis todavía</strong><p>Ingresa cinco mediciones para generar el resumen.</p></div><div class="wind-chart-wrap"><div class="chart-title">Distribución de lecturas <small>Último análisis</small></div><div id="windBars" class="wind-bars"><div class="chart-empty">El gráfico aparecerá después del análisis.</div></div></div><div class="threshold-box"><strong>Clasificación didáctica</strong><div><span class="threshold-dot dot-green"></span> Menor a 20 km/h: bajo</div><div><span class="threshold-dot dot-amber"></span> 20 a menos de 40 km/h: moderado</div><div><span class="threshold-dot dot-orange"></span> 40 a menos de 60 km/h: elevado</div><div><span class="threshold-dot dot-red"></span> 60 km/h o más: muy elevado</div><small>No representa límites técnicos u operativos reales.</small></div></article>
+          </div>
+          <article class="panel-card wind-history-panel"><div class="panel-heading"><div><h2>Historial de análisis</h2><p>Se conservan los últimos análisis en este navegador.</p></div></div><div class="table-wrap"><table><thead><tr><th>Fecha y hora</th><th>Mediciones (km/h)</th><th>Promedio</th><th>Máximo</th><th>Clasificación</th></tr></thead><tbody id="windHistoryBody"><tr><td colspan="5" class="table-empty">No hay análisis registrados.</td></tr></tbody></table></div></article>
+        </section>
+
+        <!-- SENSORES -->
+        <section class="view-section" id="view-sensors" aria-labelledby="sensorsTitle">
+          <div class="page-heading"><span class="eyebrow">MÓDULO 04 · INSTRUMENTACIÓN</span><h1 id="sensorsTitle">Registro de sensores</h1><p>Valida el identificador, selecciona el tipo y registra una lectura numérica.</p></div>
+          <div class="module-layout">
+            <article class="panel-card form-panel"><div class="panel-heading"><div><h2>Registrar sensor</h2><p>Los códigos deben respetar el formato establecido.</p></div><span class="module-number">04</span></div><form id="sensorForm" class="form-grid" novalidate>
+              <div class="field full-field"><label for="sensorCode">Código del sensor <span class="required">*</span></label><input id="sensorCode" type="text" maxlength="7" placeholder="SEN-001" autocomplete="off" required><small>Formato obligatorio: SEN- seguido de exactamente tres dígitos.</small></div>
+              <div class="field full-field"><label for="sensorType">Tipo de sensor <span class="required">*</span></label><select id="sensorType" required><option value="Temperatura">Temperatura (°C)</option><option value="Vibración">Vibración (mm/s)</option><option value="Velocidad">Velocidad (km/h)</option><option value="Tensión">Tensión (kN)</option><option value="Otro">Otro / lectura genérica</option></select></div>
+              <div class="field full-field"><label for="sensorReading">Lectura <span class="required">*</span></label><input id="sensorReading" type="number" step="any" placeholder="Ej. 24.5" required><small>Debe ser un número válido. Se permiten valores negativos cuando el tipo de medición lo justifique.</small></div>
+              <p class="validation-hint full-field"><strong>Validación aplicada:</strong> <code>/^SEN-\d{3}$/</code></p>
+              <button class="btn btn-primary full-field" type="submit">＋ Registrar sensor</button>
+            </form></article>
+            <article class="panel-card sensor-info-panel"><div class="panel-heading"><div><h2>Guía de identificación</h2><p>Ejemplos para comprender la expresión regular.</p></div></div><div class="code-example valid-example"><span>✓</span><div><strong>SEN-001</strong><small>Formato válido</small></div></div><div class="code-example invalid-example"><span>✕</span><div><strong>SEN-1</strong><small>Solo tiene un dígito</small></div></div><div class="code-example invalid-example"><span>✕</span><div><strong>SENSOR-001</strong><small>Prefijo incorrecto</small></div></div><div class="sensor-note"><strong>Importante</strong><p>El sistema también impide registrar dos veces el mismo código. Los registros se guardan en el navegador mediante localStorage.</p></div></article>
+          </div>
+          <article class="panel-card table-panel sensor-table-panel"><div class="panel-heading"><div><h2>Sensores válidos registrados</h2><p id="sensorCountLabel">0 sensores registrados.</p></div><span class="soft-badge soft-green">CÓDIGOS VALIDADOS</span></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Tipo</th><th>Lectura</th><th>Fecha y hora</th><th>Validación</th><th>Acción</th></tr></thead><tbody id="sensorsTableBody"><tr><td colspan="6" class="table-empty">No hay sensores registrados.</td></tr></tbody></table></div></article>
+        </section>
+
+        <!-- BITÁCORA -->
+        <section class="view-section" id="view-log" aria-labelledby="logTitle">
+          <div class="page-heading heading-with-action"><div><span class="eyebrow">TRAZABILIDAD</span><h1 id="logTitle">Bitácora de actividad</h1><p>Historial local de acciones realizadas durante la práctica.</p></div><div class="heading-actions"><button class="btn btn-outline" id="exportLog" type="button">↓ Exportar CSV</button><button class="btn btn-danger-outline" id="clearLog" type="button">Limpiar bitácora</button></div></div>
+          <article class="panel-card table-panel"><div class="panel-heading"><div><h2>Registro de actividad</h2><p>Fecha, operador, módulo y detalle de cada acción.</p></div><span class="soft-badge neutral" id="logCountBadge">0 EVENTOS</span></div><div class="table-wrap"><table><thead><tr><th>Fecha y hora</th><th>Operador</th><th>Módulo</th><th>Detalle de actividad</th><th>Tipo</th></tr></thead><tbody id="logTableBody"><tr><td colspan="5" class="table-empty">No hay actividades registradas.</td></tr></tbody></table></div></article>
+          <div class="privacy-note"><span>ⓘ</span><p>La bitácora se almacena en el navegador de este equipo. No se envía a un servidor y puede borrarse al limpiar los datos del navegador.</p></div>
+        </section>
+
+        <footer class="app-footer"><span>SIMTELE-WEB · Proyecto de Programación Web I</span><span>Versión académica 1.0 <b>•</b> Datos ficticios, sin conexión con sistemas reales</span></footer>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+  <div class="confirm-modal hidden" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><div class="confirm-card"><div class="confirm-icon">?</div><h2 id="confirmTitle">¿Confirmas esta acción?</h2><p id="confirmText">Esta acción no se puede deshacer.</p><div class="confirm-actions"><button class="btn btn-outline" id="cancelConfirm" type="button">Cancelar</button><button class="btn btn-danger" id="acceptConfirm" type="button">Confirmar</button></div></div></div>
+</body>
+</html>
